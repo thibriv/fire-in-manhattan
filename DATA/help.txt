@@ -1,0 +1,18 @@
+Welcome here to find help!
+
+The reset button will reset everything that you changed in the settings. Don't forget to validate your settings before reseting if you were in the settings interface. Otherwise, the settings button will have an issue. If it's the case, just keep clicking on it to have the settings appear.
+
+The settings button will change the interface, so that you can add/remove stations or roadworks.
+To add/remove a station, you only have to click on the button and then choose it on the map (don't forget to put a name of the station you want to create).
+To add/remove a roadwork, you have to click on the two crossroads, where between them the street have a roadwork.
+If the roadwork don't appear on the map, you have to add another one by clicking on the second crossroad and then on the first one, because the street is two oneway in the data.
+Don't forget to click on the valid button to come back at the main interface.
+
+In the box "Fire choice", click on the button to allow you to click on the map where you want to put the fire.
+
+In the algorithm box, you can choose what algorithm you want to use.
+Please note that, if you choose a bidirectional one or the monodirectional A*, you will have to choose a fire station from where you want to go.
+
+If you click on the button "GPS Guidance", which appears only when you have run an algorithm, you would see a new window with the instructions of directions to go to the fire from the station. You may also hear them with the vocal synthesis, which is very convenient when they are roadworks.
+
+Rescue well and quickly with our app.
