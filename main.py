@@ -6,7 +6,7 @@ COORDS_FILE = "DATA/manhattan_coords.txt"
 
 def from_coords_file(fname):
     """
-    lit les coordonées des stations de pompiers et leur nom dans un fichier txt selon le schéma de ligne suivant : name;x;y
+    reads the stations coordinates et their names in the txt file (coded as: name;x;y)
     """
     names = []
     coords = []

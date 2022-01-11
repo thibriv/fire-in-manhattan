@@ -47,22 +47,22 @@ class Gps_Guide(QMainWindow):
         """
         node_dict = graph.node_dict
         nodes = []
-        for n_id in path: #création liste des noeuds du chemin
+        for n_id in path: #creation of the list of the nodes from the path
             n = node_dict[n_id]
             nodes.append(n)
         nodes.reverse()
         l_nodes = len(nodes)
 
-        with open("DATA/gps.txt", "w") as f: #ouverture/création du fichier gps.txt
+        with open("DATA/gps.txt", "w") as f: #opens/creates the file gps.txt
             i = 1
-            j = 0 #indicateur de première boucle
-            while i < l_nodes:  # parcourt de la liste edges pour écrire indication dans le fichier
+            j = 0 #indicates the first loop
+            while i < l_nodes:  # scan the edges list to write the orders in the file
                 e = get_edge(graph, nodes[i - 1], nodes[i])
                 street = e['d8']
                 dist = float(e['d9'])
                 i += 1
                 k = i - 1
-                while i < l_nodes:  # tant que les rues "suivantes" ont le même nom
+                while i < l_nodes:  # while the "following" streets have the same name
                     e = get_edge(graph, nodes[i - 1], nodes[i])
                     if street == e['d8']:
                         dist += float(e['d9'])
@@ -70,7 +70,7 @@ class Gps_Guide(QMainWindow):
                     else:
                         break
                 dist_str = distRound(dist)
-                if j == 0: #première rue visitée
+                if j == 0: #first visited street
                     f.write("Take " + street + " for " + dist_str + "\n\n")
                 else :
                     n1, n2, n3 = nodes[k - 2], nodes[k - 1], nodes[k]
@@ -79,13 +79,13 @@ class Gps_Guide(QMainWindow):
                 j += 1
             distTotal_str = distRound(distTotal)
             f.write("\nYou have just arrived after " + distTotal_str)
-        with open("DATA/gps.txt","r") as f: #lecture du fichier pour synthèse vocale
+        with open("DATA/gps.txt","r") as f: #reading of the file for vocal synthesis
             self.instructions = []
             for line in f:
                 if line != "\n":
                     self.instructions.append(line)
-        self.display.setText(open("DATA/gps.txt","r").read()) #affichage des instructions dans la sous-fenêtre
-        self.lineToSay = 0 #indice du numéro de l'instruction à lire
+        self.display.setText(open("DATA/gps.txt","r").read()) #displays the orders in the sub-window
+        self.lineToSay = 0 #index of the order to pronounce
 
     def previous_say(self):
         """demande la lecture de l'instruction précédente"""
@@ -130,14 +130,14 @@ def distRound(dist):
     """
     arrondi la distance dist puis la transforme en chaine de caractère avec unité et typographie française
     """
-    if dist // 1000 != 0:  # distance de l'ordre du kilomètre
+    if dist // 1000 != 0:  # distance in kilometers
         dist = round(dist, 0)
         km = int(dist // 1000)
         rest = dist % 1000
         m = rest * 1000
         dist_str = str(km) + "," + str(m)[:3] + " km"
         return dist_str
-    else:  # distance de l'ordre du mètre
+    else:  # distance in meters
         m = round(dist, 0)
         m = int(m)
         dist_str = str(m) + " m"
@@ -145,10 +145,10 @@ def distRound(dist):
 
 def orientation(n1,n2,n3):
     """
-    :param n1: noeud pré virage
-    :param n2: noeud du virage
-    :param n3: noeud destination
-    :return: renvoie si on doit prendre à gauche ou à droite pour changer de rue avec une distinction entre tourner (>=45°) et diriger (<45°)
+    :param n1: before turn node
+    :param n2: turn node
+    :param n3: after turn node
+    :return: returns if you have to got to the left or the right when there is a change of street
     """
 
     def vectorisation(n1, n2):
@@ -159,12 +159,12 @@ def orientation(n1,n2,n3):
         vect = [x, y]
         return vect
 
-    v_dir = vectorisation(n1, n2) #direction de la route
-    v_dest = vectorisation(n1, n3) #vecteur entre noeud pré-origine et destination
-    v_suite = vectorisation(n2, n3) #vecteur de la suite du chemin après le virage en n2
+    v_dir = vectorisation(n1, n2) #direction of the road
+    v_dest = vectorisation(n1, n3) #vector between before turn node and destination
+    v_suite = vectorisation(n2, n3) #vector of the next path of the turn in n2
     angle = math.acos(np.vdot(v_dir, v_suite)/(np.linalg.norm(v_dir)*(np.linalg.norm(v_suite))))
     prod_vec=np.cross(v_dir,v_dest)
-    if prod_vec>0: #vers la gauche
+    if prod_vec>0: #to the left
         if angle >= math.pi/4:
             return "Turn left on "
         else :
@@ -176,9 +176,9 @@ def orientation(n1,n2,n3):
 
 def street_name(e):
     """
-    vérifie/ajoute si l'attribut d8 (nom de rue) est présent sur e
+    check/add if the d8 attribute (name of street) is present on e
     """
-    try:  # test si l'attribut du nom de rue existe
+    try:  # if d8 exists
         e['d8']
-    except KeyError:  # ajout de l'attribut à une valeur par défaut si l'attribut n'existe pas
+    except KeyError:  # add it to a default value
         e['d8'] = "road without name"

@@ -17,12 +17,12 @@ def dijkstra(graph, src, dest):
     i=0
     while heap:
         i+=1
-        node = heap.popitem()[0]  # on prend le premier de la liste de priorité
+        node = heap.popitem()[0]  # we take the first item of the heapqueue
         node.close = True
-        node.color = g.COLOR_NODE_PAR[0]  # coloration du noeud
-        if node in dest:  # si noeud destination alors fin de la recherche
+        node.color = g.COLOR_NODE_PAR[0]  # coloration of the node
+        if node in dest:  # if the node is the destination then end of the algorithm
             return (node.dist, path(node), node)
-        for (v, vweight) in neighbours(graph, node):  # pour tout les voisins on recupère la longueur de l'arc
+        for (v, vweight) in neighbours(graph, node):  # for all neighbours, we get the length of the edge
             if not v.close:
                 dist = node.dist + vweight
                 if v.dist > dist:

@@ -9,7 +9,7 @@ def astar(graph, src, dest):
             it[0] += 1
             u.color = g.COLOR_NODE_PAR[1]
             u.close[0] = True
-            for (v, v_weight) in neighbours(graph, u, bool):  # pour tout les voisins on recupère la longueur de l'arc
+            for (v, v_weight) in neighbours(graph, u, bool):  # for all neighbours, we get the length of the edge
                 current_cost = u.c[0] + v_weight
                 if not v.close[0]:
                     v.c[0] = current_cost
@@ -21,7 +21,7 @@ def astar(graph, src, dest):
             it[1] += 1
             u.close[1] = True
             u.color = g.COLOR_NODE_PAR[0]
-            for (v, v_weight) in neighbours(graph, u, bool):  # pour tout les voisins on recupère la longueur de l'arc
+            for (v, v_weight) in neighbours(graph, u, bool): # for all neighbours, we get the length of the edge
                 current_cost = u.c[1] + v_weight
                 if not v.close[1]:
                     v.c[1] = current_cost
@@ -41,8 +41,8 @@ def astar(graph, src, dest):
     dest.h[1] = 0
     src.c[0] = 0
     dest.c[1] = 0
-    heapfront = hp.heapdict()  # liste priorité avant
-    heapback = hp.heapdict()  # liste priorité arrière
+    heapfront = hp.heapdict()  # front heapqueue
+    heapback = hp.heapdict()  # back heapqueue
     heapfront[src] = 0
     heapback[dest] = 0
     while True:
@@ -51,12 +51,12 @@ def astar(graph, src, dest):
         if peakf.close[1]:
             astar_int(heapfront, True)
             return (sum(peakf.c), listonly(
-                path(peakf, True) + path(peakf, False)))  # mindist et reconstruire trajet depuis noeud charniere
+                path(peakf, True) + path(peakf, False)))  #mindist and construction of the path from bridge node
         if peakb.close[0]:
             astar_int(heapback, False)
             return (sum(peakb.c), listonly(
-                path(peakb, True) + path(peakb, False)))  # mindist et reconstruire trajet depuis noeud charniere
-        if it[0] > it[1]:  # autre condition possible sur len des liste de priorité
+                path(peakb, True) + path(peakb, False)))  #mindist and construction of the path from bridge node
+        if it[0] > it[1]:  #other possible condition on 'len' of the heapqueues
             astar_int(heapback, False)
         else:
             astar_int(heapfront, True)

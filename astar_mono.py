@@ -3,7 +3,7 @@ import heapdict as hp
 import graph_display as g
 
 def astar(graph, src, dest):
-    open_list = hp.heapdict()  # liste de priorité (noeud à visiter)
+    open_list = hp.heapdict()  # heapqueue (nodes to visit)
     for node in graph.nodes():
         node.close = False
         node.h = inf
@@ -17,7 +17,7 @@ def astar(graph, src, dest):
         u.close = True
         if u == dest:
             return (u.c, path(u))
-        for (v, v_weight) in neighbours(graph, u):  # pour tout les voisins on recupère la longueur de l'arc
+        for (v, v_weight) in neighbours(graph, u):  # for all neighbours, we get the length of the edge
             current_cost = u.c + v_weight
             v.color = g.COLOR_NODE_PAR[0]
             if not v.close:

@@ -4,38 +4,38 @@ import graph_display as g
 
 def initialisation(graph, dest): # dest est la liste des destinations
     n = len(dest)
-    heap = [] # création de la liste de priorité
+    heap = [] # creation of the heapqueue
     it = [0 for k in range(n)]
     for node in graph.nodes():
-        node.h = [inf for k in range(n)] # initialisation de la liste des heuristiques
-        node.c = [inf for k in range(n)] # initialisation de la liste des coûts
-        node.suc = [None for k in range(n)] # initialisation de la liste des successeurs
-        node.close = [False for k in range(n)] # initialsiaiton de la liste des noeuds (pas parcouru)
+        node.h = [inf for k in range(n)] # initialization of the heuristics list
+        node.c = [inf for k in range(n)] # initialization of the costs list
+        node.suc = [None for k in range(n)] # initialization of the successors list
+        node.close = [False for k in range(n)] # initializaiton of the non-explored nodes list
     for k in range(n):
         d = dest[k]
         d.h[k] = 0
         d.c[k] = 0
-        heap.append(hp.heapdict()) # ajout des sous-listes de priorité
-        heap[k][d] = 0 # ajout des distances aux sous-listes
+        heap.append(hp.heapdict()) # add of the sub-heapqueues
+        heap[k][d] = 0 # add of the distance to the sub-lists
     return heap, it
 
 def astar(graph, src, dest):
     heap, it = initialisation(graph, dest)
-    while True: # tant que le programme tourne
-        i = condition_priorite(it) # indice du minimum de it
-        u = heap[i].popitem()[0] # on prend le noeud d'indice i de la liste de priorité
-        u.close[i] = True # le noeud est parcouru
-        if u == src: # si le noeud correspond à la source
-            return (u.c[i], path(u, i), dest[i]) # retourne le coût, le chemin et la destination
-        heuristique = [] # création d'une liste heuristique
-        for (v, v_weight) in neighbours(graph, u):  # pour tous les voisins on recupère la longueur de l'arc
+    while True: # while the program is running
+        i = condition_priorite(it) # min index of it
+        u = heap[i].popitem()[0] # we take the node of index i in the heapqueue
+        u.close[i] = True # node is already explored
+        if u == src: # if the node is the source
+            return (u.c[i], path(u, i), dest[i]) # returns the cost, path and destination
+        heuristique = [] # creation of the heuristics list
+        for (v, v_weight) in neighbours(graph, u):  # for all neighbours, we get the length of the edge
             current_cost = u.c[i] + v_weight
             v.color = g.COLOR_NODE_PAR[i]
-            if not v.close[i]: # si le noeud n'est pas encore parcouru
+            if not v.close[i]: # if the node had not been explored yet
                 v.c[i] = current_cost
                 v.h[i] = distance(v, src)
                 heap[i][v] = v.h[i]
-                heuristique.append(v.h[i]) # mise à jour de la liste heuristique
+                heuristique.append(v.h[i]) # update of the heuristics list
                 v.suc[i] = u
         it[i] = min(heuristique)
 

@@ -42,7 +42,7 @@ class Graph(pGraph):
         for n in self.nodes():
             n_label = n.id
             G.add_node(n_label)
-            self.pos_dict[n_label] = np.array([float(n['d4']), float(n['d3'])])  # création des positions des points
+            self.pos_dict[n_label] = np.array([float(n['d4']), float(n['d3'])])  # creation of the positions of the points
             if n.color == NODE_PATH_COLOR :
                 nodespath.append(n_label)
             elif n.color in [SRC_COLOR, CHOSEN_DEST_COLOR]:
@@ -68,7 +68,7 @@ class Graph(pGraph):
 class GraphDisplayML(GraphMLParser):
     def parse(self, fname):
         """
-        Redéfinition de la méthode parse de la classe GraphMLParser pour l'incrustation dans la fênetre Qt
+        redefinition of the methode parse from the GraphMLParser class for the Qt use
         """
 
         g = None

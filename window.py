@@ -5,11 +5,11 @@ from PyQt5 import QtGui
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
-#import modules visuels
+#import of the visuals modules
 import graph_display as graph
 import gps_guide as gps
 
-#import des algorithmes
+#import of the algorithms
 import dijkstra_mono
 import dijkstra_bi
 import dijkstra_multi
@@ -51,50 +51,50 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QtGui.QIcon(WINDOW_ICON))
         self._main = QWidget()
         self.setCentralWidget(self._main)
-        self.initUI()  # initialisation fenêtre principale
-        self.initGraph(fname) #initialisation du graphe
-        self.initPos() #initisaliation de la source et de la destination à une valeur par défaut
-        self.initRoadworks()  # initialisation de l'attribut travaux
-        self.initColorDict() #initialisation des dictionnaires pour la coloration du graphe
-        self.updateGraph() #mise à jour du graphe
+        self.initUI()  # initialization of the main window
+        self.initGraph(fname) #initialization of the graph
+        self.initPos() #initizaliation of the source and of the destination to a default value
+        self.initRoadworks()  # initialization of the roadworks attribute
+        self.initColorDict() #initialization of the dicts for the coloration of the graphe
+        self.updateGraph() #update of the graph
 
     def initUI(self):
         """
-        initialise la fenêtre globale et son interface
+        initializes the main window and the GUI
         """
-        self.grid = QGridLayout(self._main)  # grille de layout pour le widget central
-        self._main.setLayout(self.grid)  # définition du layout du widget central
+        self.grid = QGridLayout(self._main)  # layout grid for the center widget
+        self._main.setLayout(self.grid)  # definition of the layout for the center widget
 
-        self.setGeometry(QDesktopWidget().availableGeometry()) #mise en plein écran de la fenêtre
+        self.setGeometry(QDesktopWidget().availableGeometry()) #full screen window
         self.setWindowTitle('Map - Fire in Manhattan')
 
-        #création de la figure matplotlib pour accueillir le graph
+        #creation of the matplotlib figur for the graph
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
 
-        self.grid.addWidget(self.canvas, 0, 2, 9, 9) #ajout de la figure matplotlib au layout
-        self.addToolBar(NavigationToolbar(self.canvas, self)) #ajout de la toolbar lié à la figure matplotlib
+        self.grid.addWidget(self.canvas, 0, 2, 9, 9) #adding the matplotlib figur to the grid
+        self.addToolBar(NavigationToolbar(self.canvas, self)) #adding the matplotlib toolbar
         self.show()
 
-        self.createHelp() #crée le widget "help"
-        self.createSettingsButtons(BUTTONS_SETTINGS_NAME, BUTTONS_SETTINGS_FUNCTION, SETTINGS_BUTTONS_ICON) #création des boutons de réglages (tout en haut)
-        self.createButtonsAlgo(BUTTONS_ALGO_NAME, BUTTONS_ALGO_FUNCTION)  # création des boutons pour le choix algo
-        self.createBoxGps(BUTTON_DIALOG_NAME, BUTTON_DIALOG_FUNCTION)  # création du formulaire pour le choix GPS
+        self.createHelp() #creates widget "help"
+        self.createSettingsButtons(BUTTONS_SETTINGS_NAME, BUTTONS_SETTINGS_FUNCTION, SETTINGS_BUTTONS_ICON) #creation of the settings buttons
+        self.createButtonsAlgo(BUTTONS_ALGO_NAME, BUTTONS_ALGO_FUNCTION)  # creation of the buttons to choose the algorithms
+        self.createBoxGps(BUTTON_DIALOG_NAME, BUTTON_DIALOG_FUNCTION)  # creation of the formular to choose the fire
         self.createStationForm(self.station_names_init)
-        self.createPathBox()  # crée la boite d'affichage du chemin
-        self.createStationBox() #crée la boite d'affichage de la caserne
-        self.createSettingsUI() #crée les boites pour les réglages de l'application
+        self.createPathBox()  # creates the box to display the path
+        self.createStationBox() #creates the box to display the station
+        self.createSettingsUI() #creates the boxes for the settings view
 
     def initGraph(self, fname):
         """
         initialise le graphe
         """
-        parser = graph.GraphDisplayML()  # renomage commande
-        self.graphe = parser.parse(fname)  # création du graph
+        parser = graph.GraphDisplayML()
+        self.graphe = parser.parse(fname)  # creation of the graph
 
     def initPos(self):
         """
-        initialise les positions sources et destination par défaut
+        initializes the positions of sources and destination at a default value
         """
         self.dest = []
         for i,(x,y) in enumerate(self.station_coords):
@@ -107,8 +107,7 @@ class MainWindow(QMainWindow):
 
     def initColorDict(self):
         """
-        initialise le dictionnaire des liaisons, ainsi que leur couleur, avec comme clé, les noeuds de la liaison
-        initialise le dictionnaire des noeuds et leur couleur
+        initializes the edges dict, with their color, the key is the nodes of the edge
         """
         self.graphe.node_dict = {}
         self.graphe.edge_dict = {}
@@ -139,7 +138,7 @@ class MainWindow(QMainWindow):
 
     def createButtonsAlgo(self, buttons_algo_name, buttons_algo_function):
         """
-        création des bouttons pour le choix algo
+        creation of the buttons to choose the algorithm
         """
         self.button_algo_box = QGroupBox("Algorithm choice", self._main)
         layout = QVBoxLayout()
@@ -185,7 +184,7 @@ class MainWindow(QMainWindow):
 
     def createBoxGps(self, button_name, button_function):
         """
-        creation de la boite de choix gps
+        creation of the box to choose the fire
         """
         self.gps_box = QGroupBox("Fire choice", self._main)
         layout = QHBoxLayout()
@@ -199,7 +198,7 @@ class MainWindow(QMainWindow):
 
     def createPathBox(self):
         """
-        création de la boite affichage info chemin et caserne
+        creation of the box to display the info path and station
         """
         self.path_box = QGroupBox("Algorithm result", self._main)
         layout = QVBoxLayout()
@@ -261,18 +260,18 @@ class MainWindow(QMainWindow):
 
     def valid_gps_fire(self, event):
         """
-        calcul la source la plus proche en fonction de l'endroit où la souris a cliqué
+        calculates the closest source depending on where the user clicked
         """
         x, y = event.xdata, event.ydata
-        self.src.color = graph.DEFAULT_NODE_COLOR  # le noeud précedent devient un noeud ordinaire
+        self.src.color = graph.DEFAULT_NODE_COLOR  # previous node is now and ordinary node
         self.src = self.closest_node(x, y)
-        self.src.color = graph.SRC_COLOR  # mise à jour couleur noeud
-        self.updateGraph()  # mise à jour du graph
-        self.canvas.mpl_disconnect(self.cid) #déconnection des mouse press event
+        self.src.color = graph.SRC_COLOR  # update the color of the node
+        self.updateGraph()
+        self.canvas.mpl_disconnect(self.cid) #disconnecting the mouse press event
 
     def closest_node(self, x, y, bool=False):
         """
-        trouve le noeud le plus proche des coordonnées (x,y)
+        find the closest node from the (x,y) coordinates
         """
         def distance(lat, long, noeud):
             x = float(noeud['d4'])
@@ -281,7 +280,7 @@ class MainWindow(QMainWindow):
         if not bool:
             closestN = self.graphe.nodes()[0]
             minDist = distance(x, y, closestN)
-            for n in self.graphe.nodes()[1:]:  # premier élément déjà parcouru
+            for n in self.graphe.nodes()[1:]:  # first element already explored
                 dist = distance(x, y, n)
                 if min(dist, minDist) == dist:
                     minDist = dist
@@ -290,7 +289,7 @@ class MainWindow(QMainWindow):
         else:
             closestN = self.dest[0]
             minDist = distance(x, y, closestN)
-            for n in self.dest[1:]:  # premier élément déjà parcouru
+            for n in self.dest[1:]:  # first element already explored
                 dist = distance(x, y, n)
                 if min(dist, minDist) == dist:
                     minDist = dist
@@ -411,13 +410,13 @@ class MainWindow(QMainWindow):
         """
         mise à jour du graphe
         """
-        self.figure.clf()  # effaçage de la figure
-        self.graphe.show(graph.SHOW_LABEL)  # création affichage du graph
-        self.figure.canvas.draw()  # affichage du graph dans Qt
+        self.figure.clf()  # clear the figur
+        self.graphe.show(graph.SHOW_LABEL)  # creates the display of the graph
+        self.figure.canvas.draw()  # display the graph in the Qt window
 
     def resetGraph(self):
         """
-        remet à zéro le graph sans changer la source si elle n'était plus à sa valeur par défaut, ni les travaux
+        reset the graph without changing the source, nor the roadworks
         """
         self.initColorDict()
         self.updateGraph()
@@ -426,7 +425,7 @@ class MainWindow(QMainWindow):
 
     def resetList(self):
         """
-        remet à zéro les listes des noms
+        reset the station-names list
         """
         def resetStation(self):
             self.listView.clear()
@@ -435,7 +434,7 @@ class MainWindow(QMainWindow):
 
     def reset(self):
         """
-        remet à zéro toute la fenêtre et le graph aux valeurs par défaut
+        reset all the window and the graph to the default values
         """
         self.initRoadworks()
         self.initPos()
@@ -469,7 +468,7 @@ class MainWindow(QMainWindow):
 
     def afficheDist(self, dist):
         """
-        affiche la distance dans la boîte prévue
+        shows the distance in the box
         """
         dist_str = gps.distRound(dist)
         self.path_label.setText("The shortest distance is " + dist_str)
@@ -477,7 +476,7 @@ class MainWindow(QMainWindow):
 
     def guidage_gps(self):
         """
-        affiche la sous-fenêtre pour les indications de guidage gps
+        shows the sub-window for gps guidance
         """
         self.subwindow = gps.Gps_Guide(self.graphe, self.path, self.distPath)
         self.subwindow.show()

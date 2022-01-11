@@ -2,8 +2,10 @@ import heapdict as hp
 from math import inf
 import graph_display as g
 
-#renvoie les voisins de node dans le graph ainsi que la longueur de l'arrete entre node et son voisin
 def neighbours(graph, node, bool):
+    """
+    returns the neighbours of node in the graph and the length of the edgebetween node and its neighbour
+    """
     n = []
     k = graph.nodes().index(node)
     for elt in graph.nodes()[k].edges():
@@ -20,8 +22,10 @@ def neighbours(graph, node, bool):
                 n.append((elt.node(node), float(elt["d9"])))
     return n
 
-#renvoie l'id des points du chemin pour atteindre dest
 def path(node,bool):
+    """
+    returns the id of the nodes from the path to destination
+    """
     if bool:
        if node.pred == None:
           return [node.id]
@@ -31,8 +35,10 @@ def path(node,bool):
             return [node.id]
         return [node.id]+path(node.suc,False)
 
-#ajoute les attributs necessaires aux noeuds et initialise la source et la dest
 def initialisation_node(graph,src,dest):
+    """
+    initialize the mandatory attributes to the nodes and initialize the source and the destination
+    """
     for node in graph.nodes():
         node.dist = [inf,inf]
         node.suc = None
@@ -41,29 +47,33 @@ def initialisation_node(graph,src,dest):
     src.dist[0] = 0
     dest.dist[1] = 0
 
-#revoie la liste L sans doublon
 def listonly(L):
+    """
+    returns the list L without twice the same element
+    """
     setlist = []
     for elt in L:
         if elt not in setlist:
             setlist.append(elt)
     return setlist
 
-#Calcul le plus court chemin entre src et dest dans graph
 def dijkstra(graph, src, dest):
+    """
+    calculate the shortest path from src to dest in graph
+    """
     def dijkstra_int(heap,bool,mindist,nc):
         u=heap.popitem()[0]
         if bool:
             it[0]-=1
             u.color = g.COLOR_NODE_PAR[0]
             u.close[0] = True
-            for (v, vweight) in neighbours(graph,u,bool): #pour tout les voisins on recupère la longueur de l'arc
-                 if not v.close[0]:# si le noeud n'a pas encore été visité
+            for (v, vweight) in neighbours(graph,u,bool): # for all neighbours, we get the length of the edge
+                 if not v.close[0]:# if the node had not been explored yet
                     dist = u.dist[0] + vweight
                     if v.close[1]:
                         if dist + v.dist[1] < mindist:
                             mindist = dist + v.dist[1]
-                            nc = v  # noeud charniere
+                            nc = v  # bridge node
                     if v.dist[0] > dist:
                        v.dist[0] = dist
                        v.pred = u
@@ -74,13 +84,13 @@ def dijkstra(graph, src, dest):
             it[1]-=1
             u.close[1] = True
             u.color = g.COLOR_NODE_PAR[25]
-            for (v, vweight) in neighbours(graph,u,bool): #pour tout les voisins on recupère la longueur de l'arc
-                 if not v.close[1]:# si le noeud n'a pas encore été visité
+            for (v, vweight) in neighbours(graph,u,bool): # for all neighbours, we get the length of the edge
+                 if not v.close[1]:# if the node had not been explored yet
                     dist = u.dist[1] + vweight
                     if v.close[0]:
                         if dist + v.dist[0] < mindist:
                             mindist = dist + v.dist[0]
-                            nc = v  # noeud charniere
+                            nc = v  # bridge node
                     if v.dist[1] > dist:
                        v.dist[1] = dist
                        v.suc = u
@@ -89,16 +99,16 @@ def dijkstra(graph, src, dest):
             return nc,mindist
     initialisation_node(graph,src,dest)
     it=[0,0]
-    heapfront = hp.heapdict() #liste priorité avant
-    heapback = hp.heapdict() #liste priorité arrière
+    heapfront = hp.heapdict() #front heapqueue
+    heapback = hp.heapdict() #back heapqueu
     heapfront[src] = 0
     heapback[dest] = 0
     nc = None
     mindist = inf
     while True:
         if heapfront.peekitem()[1]+heapback.peekitem()[1]>=mindist:
-            return (sum(nc.dist),listonly(path(nc,True)+path(nc,False)))#mindist et reconstruire trajet depuis noeud charniere
-        if it[0]>it[1]: #autre condition possible sur len des liste de priorité
+            return (sum(nc.dist),listonly(path(nc,True)+path(nc,False)))#mindist and construction of the path from bridge node
+        if it[0]>it[1]: #other possible condition on 'len' of the heapqueues
             nc,mindist = dijkstra_int(heapback,False,mindist,nc)
         else:
             nc,mindist = dijkstra_int(heapfront,True,mindist,nc)
